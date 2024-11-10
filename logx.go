@@ -9,11 +9,6 @@ import (
 )
 
 func MustNew(c Conf) *zap.Logger {
-	err := os.MkdirAll(c.Dir, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
-
 	var level zapcore.Level
 	var writer zapcore.WriteSyncer
 
@@ -21,6 +16,11 @@ func MustNew(c Conf) *zap.Logger {
 		writer = zapcore.AddSync(os.Stdout)
 		level = zapcore.DebugLevel
 	} else {
+		err := os.MkdirAll(c.Dir, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+
 		var w = NewWriter(c.Dir)
 		writer = zapcore.AddSync(w)
 		level = zapcore.InfoLevel
